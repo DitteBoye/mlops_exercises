@@ -32,7 +32,6 @@ test_dataset = MNIST(dataset_path, transform=mnist_transform, train=False, downl
 train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
 
-
 class Encoder(nn.Module):
     """Gaussian MLP Encoder."""
 
