@@ -3,6 +3,7 @@ import pytest
 import torch
 
 from mnist.data import corrupt_mnist
+from tests import _PATH_DATA
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "processed")
 
