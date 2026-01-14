@@ -14,3 +14,14 @@ __pycache__/
 .ruff_cache/
 
 /data
+
+# Coverage
+.coverage
+
+# Weights & Biases
+wandb/
+
+# Training artifacts
+model.pth
+train.log
+mlops_exercises/
