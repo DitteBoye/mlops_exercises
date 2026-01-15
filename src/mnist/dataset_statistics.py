@@ -1,40 +1,43 @@
 import matplotlib.pyplot as plt
 import torch
 import typer
-from dataset import MnistDataset
-from utils import show_image_and_target
+
+from mnist.dataset import MnistDataset
 
 
 def dataset_statistics(datadir: str = "data") -> None:
-    """Compute dataset statistics."""
     train_dataset = MnistDataset(data_folder=datadir, train=True)
     test_dataset = MnistDataset(data_folder=datadir, train=False)
+
     print(f"Train dataset: {train_dataset.name}")
     print(f"Number of images: {len(train_dataset)}")
     print(f"Image shape: {train_dataset[0][0].shape}")
-    print("\n")
+    print()
     print(f"Test dataset: {test_dataset.name}")
     print(f"Number of images: {len(test_dataset)}")
     print(f"Image shape: {test_dataset[0][0].shape}")
 
-    show_image_and_target(train_dataset.images[:25], train_dataset.target[:25], show=False)
+    # ---- example images ----
+    images = train_dataset.images[:25]
+    fig, axes = plt.subplots(5, 5, figsize=(5, 5))
+    for ax, img in zip(axes.flatten(), images):
+        ax.imshow(img.squeeze(), cmap="gray")
+        ax.axis("off")
+    plt.tight_layout()
     plt.savefig("mnist_images.png")
     plt.close()
 
-    train_label_distribution = torch.bincount(train_dataset.target)
-    test_label_distribution = torch.bincount(test_dataset.target)
+    # ---- label distributions ----
+    train_dist = torch.bincount(train_dataset.target)
+    test_dist = torch.bincount(test_dataset.target)
 
-    plt.bar(torch.arange(10), train_label_distribution)
+    plt.bar(range(10), train_dist)
     plt.title("Train label distribution")
-    plt.xlabel("Label")
-    plt.ylabel("Count")
     plt.savefig("train_label_distribution.png")
     plt.close()
 
-    plt.bar(torch.arange(10), test_label_distribution)
+    plt.bar(range(10), test_dist)
     plt.title("Test label distribution")
-    plt.xlabel("Label")
-    plt.ylabel("Count")
     plt.savefig("test_label_distribution.png")
     plt.close()
 
