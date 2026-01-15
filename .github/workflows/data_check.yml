@@ -1,0 +1,58 @@
+name: DVC Data Check
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "data/**"
+      - "**/*.dvc"
+      - ".dvc/**"
+
+jobs:
+  dataset_statistics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Pull data with DVC
+        run: dvc pull --no-run-cache
+
+      # - name: Check data statistics & generate report
+      #   run: |
+      #     python src/mnist/dataset_statistics.py > data_statistics.md
+      #     echo "" >> data_statistics.md
+      #     echo "## Dataset visualisations" >> data_statistics.md
+      #     echo '![](./mnist_images.png "MNIST images")' >> data_statistics.md
+      #     echo '![](./train_label_distribution.png "Train label distribution")' >> data_statistics.md
+      #     echo '![](./test_label_distribution.png "Test label distribution")' >> data_statistics.md
+
+      - name: Generate dataset statistics
+        run: |
+          python src/mnist/dataset_statistics.py > report.md
+          ls -la
+          cat report.md
+
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v2
+
+      - name: Comment on PR
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml comment create report.md --watermark-title="Data Checker"
