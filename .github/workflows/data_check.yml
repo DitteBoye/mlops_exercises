@@ -30,7 +30,7 @@ jobs:
         run: uv sync --dev
 
       - name: Pull data with DVC
-        run: dvc pull --no-run-cache
+        run: uv run dvc pull --no-run-cache
 
       # - name: Check data statistics & generate report
       #   run: |
@@ -55,4 +55,4 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cml comment create report.md --watermark-title="Data Checker"
+          uv run cml comment create report.md --watermark-title="Data Checker"
